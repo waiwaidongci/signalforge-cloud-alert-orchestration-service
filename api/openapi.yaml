@@ -1,0 +1,226 @@
+openapi: 3.0.3
+info:
+  title: SignalForge API
+  version: 0.1.0
+servers:
+  - url: /api/v1
+paths:
+  /sources:
+    get:
+      operationId: listSources
+      responses:
+        "200":
+          description: source list
+    post:
+      operationId: createSource
+      responses:
+        "201":
+          description: source created
+  /sources/{id}:
+    get:
+      operationId: getSource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: source
+    patch:
+      operationId: updateSource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: updated source
+  /webhook:
+    post:
+      operationId: ingestAlert
+      security:
+        - sourceKey: []
+      responses:
+        "200":
+          description: ingestion result
+  /alerts:
+    get:
+      operationId: listAlerts
+      responses:
+        "200":
+          description: alert list
+  /alerts/{id}:
+    get:
+      operationId: getAlert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: alert
+  /alerts/acknowledge:
+    post:
+      operationId: acknowledgeAlerts
+      responses:
+        "200":
+          description: batch acknowledged
+  /alerts/close:
+    post:
+      operationId: closeAlerts
+      responses:
+        "200":
+          description: batch closed
+  /incidents:
+    get:
+      operationId: listIncidents
+      responses:
+        "200":
+          description: incident list
+  /incidents/{id}:
+    get:
+      operationId: getIncident
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: incident
+  /incidents/{id}/timeline:
+    get:
+      operationId: incidentTimeline
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: timeline events
+  /silences:
+    get:
+      operationId: listSilences
+      responses:
+        "200":
+          description: silence list
+    post:
+      operationId: createSilence
+      responses:
+        "201":
+          description: silence created
+  /silences/{id}:
+    get:
+      operationId: getSilence
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: silence
+  /suppressions:
+    get:
+      operationId: listSuppressions
+      responses:
+        "200":
+          description: suppression list
+    post:
+      operationId: createSuppression
+      responses:
+        "201":
+          description: suppression created
+  /suppressions/{id}:
+    get:
+      operationId: getSuppression
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: suppression
+  /routing-rules:
+    get:
+      operationId: listRoutingRules
+      responses:
+        "200":
+          description: routing rules
+    post:
+      operationId: createRoutingRule
+      responses:
+        "201":
+          description: routing rule created
+  /routing-rules/{id}:
+    get:
+      operationId: getRoutingRule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: routing rule
+  /escalation-policies:
+    get:
+      operationId: listEscalationPolicies
+      responses:
+        "200":
+          description: escalation policies
+    post:
+      operationId: createEscalationPolicy
+      responses:
+        "201":
+          description: escalation policy created
+  /escalation-policies/{id}:
+    get:
+      operationId: getEscalationPolicy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: escalation policy
+  /notifications:
+    get:
+      operationId: listNotifications
+      responses:
+        "200":
+          description: notification records
+  /notifications/{id}:
+    get:
+      operationId: getNotification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: notification record
+components:
+  securitySchemes:
+    sourceKey:
+      type: apiKey
+      in: header
+      name: X-Source-Key
+

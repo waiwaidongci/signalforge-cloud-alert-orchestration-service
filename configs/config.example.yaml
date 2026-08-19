@@ -1,0 +1,31 @@
+server:
+  addr: ":8080"
+  read_timeout: 5s
+  write_timeout: 15s
+  idle_timeout: 60s
+  shutdown_timeout: 10s
+  request_timeout: 12s
+  max_body_bytes: 1048576
+
+database:
+  driver: sqlite
+  dsn: "./data/signalforge.db"
+  max_open_conns: 8
+  max_idle_conns: 4
+  conn_max_lifetime: 30m
+
+log:
+  level: info
+  format: json
+
+scheduler:
+  enabled: true
+  interval: 10s
+  jitter: 2s
+
+auth:
+  placeholder_token: "change-me"
+
+metrics:
+  enabled: true
+
