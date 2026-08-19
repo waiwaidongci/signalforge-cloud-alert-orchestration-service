@@ -133,9 +133,7 @@ func (r *SQLRepository) BatchUpdateStatus(ctx context.Context, ids []string, sta
 
 func normalizeStatus(status domain.Status) domain.Status {
 	switch status {
-	case domain.StatusAcknowledged:
-		return domain.StatusResolved
-	case domain.StatusFiring, domain.StatusResolved, domain.StatusSuppressed:
+	case domain.StatusAcknowledged, domain.StatusFiring, domain.StatusResolved, domain.StatusSuppressed:
 		return status
 	default:
 		return domain.StatusFiring

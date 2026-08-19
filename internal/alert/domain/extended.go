@@ -2,7 +2,7 @@ package domain
 
 func StatusGroup(status Status) string {
 	switch status {
-	case StatusFiring, StatusSuppressed:
+	case StatusFiring, StatusAcknowledged, StatusSuppressed:
 		return "open"
 	case StatusResolved:
 		return "closed"
@@ -15,6 +15,8 @@ func StatusOrder(status Status) int {
 	switch status {
 	case StatusFiring:
 		return 10
+	case StatusAcknowledged:
+		return 15
 	case StatusSuppressed:
 		return 20
 	case StatusResolved:
@@ -25,5 +27,5 @@ func StatusOrder(status Status) int {
 }
 
 func StatusSequence() []Status {
-	return []Status{StatusFiring, StatusSuppressed, StatusResolved}
+	return []Status{StatusFiring, StatusAcknowledged, StatusSuppressed, StatusResolved}
 }
