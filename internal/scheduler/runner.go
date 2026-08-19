@@ -56,7 +56,7 @@ func (r *Runner) runOnce(ctx context.Context) {
 		{"escalation", r.runEscalation},
 		{"silence_expiry", r.runSilenceExpiry},
 	}
-	_ = runWorkers(ctx, workers)
+	_ = runWorkers(ctx, cloneWorkers(workers))
 	r.logger.Info("scheduler loop finished", "duration", time.Since(start).String())
 }
 
