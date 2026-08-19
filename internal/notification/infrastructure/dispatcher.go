@@ -22,10 +22,10 @@ func NewDispatcher(channels ...domain.Channel) *Dispatcher {
 func (d *Dispatcher) Send(ctx context.Context, notification domain.Notification) error {
 	channel := d.channels[notification.Channel]
 	if channel == nil {
-		return fmt.Errorf("unknown notification channel %q", notification.Channel)
+		return fmt.Errorf("unknown notification channel %q: %w", notification.Channel, domain.ErrUnknownChannel)
 	}
 	if notification.Destination == "" {
-		return fmt.Errorf("notification destination is required")
+		return fmt.Errorf("notification destination is required: %w", domain.ErrDestinationRequired)
 	}
 	return channel.Send(ctx, notification.Destination, notification.Payload)
 }

@@ -11,7 +11,7 @@ func ChannelLabel(channel string) string {
 	case "log":
 		return "日志"
 	default:
-		return channel
+		return "未知通道"
 	}
 }
 
@@ -26,5 +26,9 @@ func DestinationSummary(destination string) string {
 }
 
 func BuildFailureMessage(channel string, destination string) string {
-	return strings.TrimSpace(ChannelLabel(channel) + " " + DestinationSummary(destination))
+	label := ChannelLabel(channel)
+	if label == "未知通道" {
+		return label
+	}
+	return strings.TrimSpace(label + " " + DestinationSummary(destination))
 }
