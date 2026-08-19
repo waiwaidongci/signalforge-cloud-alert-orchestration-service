@@ -31,8 +31,9 @@ func HighestPriority(rules []routingdomain.Rule) int {
 }
 
 func RulesByPriority(rules []routingdomain.Rule) []routingdomain.Rule {
-	sort.SliceStable(rules, func(i, j int) bool {
-		return rules[i].Priority > rules[j].Priority
+	sorted := append([]routingdomain.Rule(nil), rules...)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return sorted[i].Priority > sorted[j].Priority
 	})
-	return rules
+	return sorted
 }

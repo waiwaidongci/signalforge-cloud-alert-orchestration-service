@@ -29,9 +29,10 @@ func FilterRuleNames(rules []routingdomain.Rule) []string {
 			names = append(names, rule.Name)
 		}
 	}
-	return names
+	return append([]string(nil), names...)
 }
 
 func RuleSummary(rule routingdomain.Rule) string {
-	return strings.Join(FilterRuleNames([]routingdomain.Rule{rule}), ",")
+	names := FilterRuleNames([]routingdomain.Rule{rule})
+	return strings.Join(names, ",")
 }

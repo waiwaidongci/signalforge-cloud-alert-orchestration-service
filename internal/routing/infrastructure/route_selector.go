@@ -20,7 +20,7 @@ func ChannelPriority(channel string) int {
 }
 
 func SelectChannels(channels []routingdomain.Channel) []routingdomain.Channel {
-	result := channels[:0]
+	result := make([]routingdomain.Channel, 0, len(channels))
 	for _, channel := range channels {
 		if strings.TrimSpace(channel.Channel) != "" {
 			result = append(result, channel)

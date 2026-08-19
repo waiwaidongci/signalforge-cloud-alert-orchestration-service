@@ -68,10 +68,11 @@ func (s *Service) Resolve(ctx context.Context, target matcher.Target) ([]domain.
 	if err != nil {
 		return nil, err
 	}
+	rules = append([]domain.Rule(nil), rules...)
 	sort.SliceStable(rules, func(i, j int) bool { return rules[i].Priority > rules[j].Priority })
 	for _, rule := range rules {
 		if rule.Enabled && rule.Match.Matches(target) {
-			return routinginfra.MatchChannels(rule.Channels), nil
+			return routinginfra.MatchChannels(rule.CloneChannels()), nil
 		}
 	}
 	return nil, nil

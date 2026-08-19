@@ -30,5 +30,5 @@ func (r Rule) DeepCloneChannels() []Channel {
 	if r.Channels == nil {
 		return nil
 	}
-	return r.Channels
+	return append([]Channel(nil), r.Channels...)
 }
