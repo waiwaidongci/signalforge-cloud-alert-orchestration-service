@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/acme/signalforge/internal/routing/domain"
+	routinginfra "github.com/acme/signalforge/internal/routing/infrastructure"
 	"github.com/acme/signalforge/internal/shared/clock"
 	"github.com/acme/signalforge/internal/shared/id"
 	"github.com/acme/signalforge/internal/shared/matcher"
@@ -70,7 +71,7 @@ func (s *Service) Resolve(ctx context.Context, target matcher.Target) ([]domain.
 	sort.SliceStable(rules, func(i, j int) bool { return rules[i].Priority > rules[j].Priority })
 	for _, rule := range rules {
 		if rule.Enabled && rule.Match.Matches(target) {
-			return rule.Channels, nil
+			return routinginfra.MatchChannels(rule.Channels), nil
 		}
 	}
 	return nil, nil
