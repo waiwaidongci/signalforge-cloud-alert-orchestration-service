@@ -30,5 +30,7 @@ func (r Rule) DeepCloneChannels() []Channel {
 	if r.Channels == nil {
 		return nil
 	}
-	return r.Channels
+	cloned := make([]Channel, len(r.Channels))
+	copy(cloned, r.Channels)
+	return cloned
 }
