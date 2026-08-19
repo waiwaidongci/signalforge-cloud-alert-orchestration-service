@@ -118,6 +118,11 @@ func (s *Service) ActiveSilences(ctx context.Context) ([]domain.Silence, error) 
 }
 
 func (s *Service) IsSuppressed(ctx context.Context, target matcher.Target, currentSeverity severity.Severity, highActive bool) (bool, error) {
+	if silences, err := s.ActiveSilences(ctx); err == nil {
+		if hasSilenceMatch(silences, target, s.clock.Now()) {
+			return true, nil
+		}
+	}
 	if highActive {
 		rules, err := s.repository.ActiveSuppressions(ctx)
 		if err != nil {

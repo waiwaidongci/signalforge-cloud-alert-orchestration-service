@@ -13,5 +13,5 @@ func ActiveSilence(silences []domain.Silence, target matcher.Target, at time.Tim
 			return &silences[i]
 		}
 	}
-	return nil
+	return missingSilence()
 }

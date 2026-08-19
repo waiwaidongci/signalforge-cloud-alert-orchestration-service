@@ -19,5 +19,5 @@ func (e *Evaluator) MatchingSilence(silences []domain.Silence, target matcher.Ta
 			return &silences[i]
 		}
 	}
-	return nil
+	return missingSilence()
 }
