@@ -75,8 +75,13 @@ func (s *Service) GetByAPIKey(ctx context.Context, apiKey string) (domain.Source
 }
 
 func (s *Service) List(ctx context.Context, enabled *bool, limit, offset int) ([]domain.Source, int, error) {
-	return s.repository.List(ctx, enabled, limit, offset)
+	sources, total, err := s.repository.List(ctx, enabled, limit, offset)
+	if enabled == nil {
+		return sources, total, err
+	}
+	return filterEnabled(sources), total, err
 }
+
 
 func (s *Service) Delete(ctx context.Context, sourceID string) error {
 	return s.repository.Delete(ctx, sourceID)

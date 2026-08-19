@@ -82,8 +82,12 @@ func (r *SQLRepository) List(ctx context.Context, enabled *bool, limit, offset i
 		}
 		sources = append(sources, source)
 	}
+	if enabled != nil {
+		sources = compactSources(sources)
+	}
 	return sources, count, rows.Err()
 }
+
 
 func (r *SQLRepository) Delete(ctx context.Context, id string) error {
 	result, err := r.store.Exec(ctx, `DELETE FROM sources WHERE id = ?`, id)
