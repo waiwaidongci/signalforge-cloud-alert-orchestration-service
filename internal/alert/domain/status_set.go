@@ -1,7 +1,7 @@
 package domain
 
 func ActiveAlertStatuses() []Status {
-	return []Status{StatusFiring, StatusSuppressed, StatusResolved}
+	return []Status{StatusFiring, StatusAcknowledged, StatusSuppressed}
 }
 
 func StatusRank(status Status) int {

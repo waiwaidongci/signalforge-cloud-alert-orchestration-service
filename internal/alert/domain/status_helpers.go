@@ -2,7 +2,7 @@ package domain
 
 func NextStatus(action string) Status {
 	if action == "acknowledge" {
-		return StatusResolved
+		return StatusAcknowledged
 	}
 	if action == "close" {
 		return StatusResolved
@@ -11,7 +11,7 @@ func NextStatus(action string) Status {
 }
 
 func IsActive(status Status) bool {
-	return status == StatusFiring || status == StatusSuppressed
+	return status == StatusFiring || status == StatusAcknowledged || status == StatusSuppressed
 }
 
 func StatusLabel(status Status) string {

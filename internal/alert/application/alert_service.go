@@ -40,7 +40,7 @@ func (s *Service) Get(ctx context.Context, id string) (alertdomain.Alert, error)
 
 func (s *Service) Acknowledge(ctx context.Context, ids []string, actor string) error {
 	now := s.clock.Now()
-	if err := s.alerts.BatchUpdateStatus(ctx, ids, alertdomain.StatusResolved, now); err != nil {
+	if err := s.alerts.BatchUpdateStatus(ctx, ids, alertdomain.StatusAcknowledged, now); err != nil {
 		return err
 	}
 	for _, id := range ids {
