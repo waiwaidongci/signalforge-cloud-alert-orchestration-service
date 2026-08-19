@@ -51,16 +51,15 @@ func (r *Runner) runOnce(ctx context.Context) {
 	}
 	r.logger.Info("scheduler loop started")
 	start := time.Now()
-	workers := []struct {
-		name string
-		run  func(context.Context)
-	}{
+	workers := []namedWorker{
 		{"recovery", r.runRecovery},
 		{"escalation", r.runEscalation},
 		{"silence_expiry", r.runSilenceExpiry},
 	}
-	for _, worker := range workers {
-		worker.run(ctx)
-	}
+	_ = runWorkers(ctx, workers)
 	r.logger.Info("scheduler loop finished", "duration", time.Since(start).String())
+}
+
+func cloneWorkers(workers []namedWorker) []namedWorker {
+	return append([]namedWorker(nil), workers...)
 }
