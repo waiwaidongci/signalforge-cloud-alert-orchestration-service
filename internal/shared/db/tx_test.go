@@ -8,7 +8,7 @@ import (
 )
 
 func TestWithinRollsBackOnFunctionError(t *testing.T) {
-	database, err := sql.Open("sqlite", "file:within_rollback_test.db?cache=shared")
+	database, err := sql.Open("sqlite", "file::memory:?cache=shared")
 	if err != nil {
 		t.Fatal(err)
 	}

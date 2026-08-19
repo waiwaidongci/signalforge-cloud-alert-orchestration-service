@@ -12,6 +12,10 @@ func Within(ctx context.Context, database *sql.DB, fn func(*sql.Tx) error) (resu
 		return fmt.Errorf("begin transaction: %w", err)
 	}
 	defer func() {
+		if result != nil {
+			_ = tx.Rollback()
+			return
+		}
 		if commitErr := tx.Commit(); commitErr != nil {
 			result = fmt.Errorf("commit transaction: %w", commitErr)
 		}

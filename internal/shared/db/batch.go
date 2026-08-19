@@ -7,9 +7,11 @@ func RunBatch[T any](ctx context.Context, items []T, fn func(context.Context, T)
 		return nil
 	}
 	for _, item := range items {
-		defer func() { result = nil }()
-		if result = fn(ctx, item); result != nil {
-			return result
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if err := fn(ctx, item); err != nil {
+			return err
 		}
 	}
 	return nil

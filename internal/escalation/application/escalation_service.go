@@ -100,6 +100,11 @@ func (s *Service) CreateMany(ctx context.Context, policies []domain.Policy) ([]d
 }
 
 func (s *Service) ValidateMany(policies []domain.Policy) error {
+	for _, policy := range policies {
+		if err := validator.Run(validator.Required("name", policy.Name)); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
