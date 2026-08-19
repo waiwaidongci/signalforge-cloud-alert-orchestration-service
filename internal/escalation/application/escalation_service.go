@@ -5,6 +5,7 @@ import (
 
 	"github.com/acme/signalforge/internal/escalation/domain"
 	"github.com/acme/signalforge/internal/shared/clock"
+	dbutil "github.com/acme/signalforge/internal/shared/db"
 	"github.com/acme/signalforge/internal/shared/id"
 	"github.com/acme/signalforge/internal/shared/matcher"
 	"github.com/acme/signalforge/internal/shared/severity"
@@ -83,6 +84,23 @@ func (s *Service) Match(ctx context.Context, target matcher.Target) ([]domain.Po
 		}
 	}
 	return matched, nil
+}
+
+func (s *Service) CreateMany(ctx context.Context, policies []domain.Policy) ([]domain.Policy, error) {
+	created := make([]domain.Policy, 0, len(policies))
+	err := dbutil.RunBatch(ctx, policies, func(ctx context.Context, policy domain.Policy) error {
+		item, err := s.Create(ctx, policy)
+		if err != nil {
+			return err
+		}
+		created = append(created, item)
+		return nil
+	})
+	return created, err
+}
+
+func (s *Service) ValidateMany(policies []domain.Policy) error {
+	return nil
 }
 
 func SeverityInRoutes(routes []domain.Route, severity severity.Severity) bool {

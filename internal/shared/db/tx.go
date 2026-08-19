@@ -6,17 +6,16 @@ import (
 	"fmt"
 )
 
-func Within(ctx context.Context, database *sql.DB, fn func(*sql.Tx) error) error {
+func Within(ctx context.Context, database *sql.DB, fn func(*sql.Tx) error) (result error) {
 	tx, err := database.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
 	}
-	if err := fn(tx); err != nil {
-		_ = tx.Rollback()
-		return err
-	}
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-	return nil
+	defer func() {
+		if commitErr := tx.Commit(); commitErr != nil {
+			result = fmt.Errorf("commit transaction: %w", commitErr)
+		}
+	}()
+	result = fn(tx)
+	return result
 }
