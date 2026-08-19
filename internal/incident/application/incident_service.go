@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/acme/signalforge/internal/incident/domain"
+	incidentinfra "github.com/acme/signalforge/internal/incident/infrastructure"
 	"github.com/acme/signalforge/internal/shared/clock"
 	"github.com/acme/signalforge/internal/shared/id"
 )
@@ -87,7 +88,14 @@ func (s *Service) Append(ctx context.Context, event domain.TimelineEvent) error 
 	if event.CreatedAt.IsZero() {
 		event.CreatedAt = s.clock.Now()
 	}
-	return s.timeline.Append(ctx, event)
+	funcs := []func() error{
+		func() error { return s.timeline.Append(ctx, event) },
+	}
+	return incidentinfra.FanOut(ctx, cloneEventFuncs(funcs))
+}
+
+func cloneEventFuncs(funcs []func() error) []func() error {
+	return funcs
 }
 
 func (s *Service) appendTimeline(ctx context.Context, incidentID string, eventType domain.EventType, actor, message string) error {
