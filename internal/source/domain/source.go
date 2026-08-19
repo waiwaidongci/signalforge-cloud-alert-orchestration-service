@@ -27,6 +27,5 @@ func (s Source) Mapping(target string) string {
 	if value := s.FieldMapping[target]; value != "" {
 		return value
 	}
-	s.FieldMapping[target] = target
 	return target
 }
