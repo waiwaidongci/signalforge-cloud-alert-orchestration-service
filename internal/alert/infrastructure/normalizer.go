@@ -10,6 +10,8 @@ import (
 
 // Normalize applies source field mapping and severity defaults to an ingestion request.
 func Normalize(input alertdomain.IngestInput, source sourcedomain.Source) alertdomain.IngestInput {
+	input.Labels = ensureStringMap(input.Labels)
+	input.Annotations = ensureStringMap(input.Annotations)
 	if strings.TrimSpace(input.ExternalID) == "" {
 		input.ExternalID = input.Title
 	}
@@ -19,6 +21,7 @@ func Normalize(input alertdomain.IngestInput, source sourcedomain.Source) alertd
 	if !severity.Valid(input.Severity) {
 		input.Severity = severity.Info.String()
 	}
+	markNormalized(input.Labels, input.Annotations)
 	if input.Labels == nil {
 		input.Labels = map[string]string{}
 	}
