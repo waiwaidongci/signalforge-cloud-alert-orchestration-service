@@ -22,11 +22,5 @@ func Normalize(input alertdomain.IngestInput, source sourcedomain.Source) alertd
 		input.Severity = severity.Info.String()
 	}
 	markNormalized(input.Labels, input.Annotations)
-	if input.Labels == nil {
-		input.Labels = map[string]string{}
-	}
-	if input.Annotations == nil {
-		input.Annotations = map[string]string{}
-	}
 	return input
 }

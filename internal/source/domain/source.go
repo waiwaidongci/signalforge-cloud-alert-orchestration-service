@@ -24,9 +24,11 @@ type Source struct {
 }
 
 func (s Source) Mapping(target string) string {
+	if s.FieldMapping == nil {
+		s.FieldMapping = map[string]string{}
+	}
 	if value := s.FieldMapping[target]; value != "" {
 		return value
 	}
-	s.FieldMapping[target] = target
 	return target
 }

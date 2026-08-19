@@ -1,6 +1,9 @@
 package infrastructure
 
 func ensureStringMap(value map[string]string) map[string]string {
+	if value == nil {
+		return map[string]string{}
+	}
 	return value
 }
 

@@ -28,7 +28,7 @@ func DefaultSeverity(raw string) string {
 
 func BuildNormalizedLabels(input alertdomain.IngestInput) map[string]string {
 	if input.Labels == nil {
-		return nil
+		input.Labels = map[string]string{}
 	}
 	input.Labels["resource"] = ResolveField(input, "resource")
 	return input.Labels
