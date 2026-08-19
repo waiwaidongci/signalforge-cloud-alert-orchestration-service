@@ -1,6 +1,14 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"errors"
+)
+
+var (
+	ErrUnknownChannel      = errors.New("unknown notification channel")
+	ErrDestinationRequired = errors.New("notification destination is required")
+)
 
 type Channel interface {
 	Name() string

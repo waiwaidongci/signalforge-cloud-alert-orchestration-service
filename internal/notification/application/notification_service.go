@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"strings"
 
 	"github.com/acme/signalforge/internal/notification/domain"
 	"github.com/acme/signalforge/internal/shared/clock"
@@ -43,6 +44,9 @@ func (s *Service) Notify(ctx context.Context, notification domain.Notification) 
 		notification.ErrorMessage = err.Error()
 		notification.UpdatedAt = s.clock.Now()
 		_ = s.repository.Update(ctx, notification)
+		if shouldReturnUnknownChannel(err) {
+			return domain.ErrUnknownChannel
+		}
 		return err
 	}
 	notification.Status = domain.StatusSent
@@ -52,6 +56,10 @@ func (s *Service) Notify(ctx context.Context, notification domain.Notification) 
 		return err
 	}
 	return nil
+}
+
+func shouldReturnUnknownChannel(err error) bool {
+	return strings.Contains(err.Error(), "destination")
 }
 
 func (s *Service) Get(ctx context.Context, id string) (domain.Notification, error) {

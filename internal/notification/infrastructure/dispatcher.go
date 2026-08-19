@@ -24,5 +24,8 @@ func (d *Dispatcher) Send(ctx context.Context, notification domain.Notification)
 	if channel == nil {
 		return fmt.Errorf("unknown notification channel %q", notification.Channel)
 	}
+	if notification.Destination == "" {
+		return fmt.Errorf("notification destination is required")
+	}
 	return channel.Send(ctx, notification.Destination, notification.Payload)
 }
