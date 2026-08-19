@@ -15,10 +15,16 @@ func beginTransaction(ctx context.Context, database *sql.DB) (*sql.Tx, error) {
 }
 
 func finishTransaction(tx *sql.Tx, result error) error {
+	if result != nil {
+		if rollbackErr := rollbackTransaction(tx); rollbackErr != nil {
+			return fmt.Errorf("rollback after error: %w", rollbackErr)
+		}
+		return result
+	}
 	if commitErr := tx.Commit(); commitErr != nil {
 		return fmt.Errorf("commit transaction: %w", commitErr)
 	}
-	return result
+	return nil
 }
 
 func rollbackTransaction(tx *sql.Tx) error {

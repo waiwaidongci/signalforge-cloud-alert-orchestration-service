@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/acme/signalforge/internal/escalation/domain"
 	"github.com/acme/signalforge/internal/shared/clock"
@@ -88,6 +89,11 @@ func (s *Service) Match(ctx context.Context, target matcher.Target) ([]domain.Po
 
 func (s *Service) CreateMany(ctx context.Context, policies []domain.Policy) ([]domain.Policy, error) {
 	created := make([]domain.Policy, 0, len(policies))
+	for _, policy := range policies {
+		if policy.Name == "" {
+			return created, fmt.Errorf("escalation policy name is required")
+		}
+	}
 	err := dbutil.RunBatch(ctx, policies, func(ctx context.Context, policy domain.Policy) error {
 		item, err := s.Create(ctx, policy)
 		if err != nil {
@@ -100,6 +106,11 @@ func (s *Service) CreateMany(ctx context.Context, policies []domain.Policy) ([]d
 }
 
 func (s *Service) ValidateMany(policies []domain.Policy) error {
+	for _, policy := range policies {
+		if policy.Name == "" {
+			return fmt.Errorf("escalation policy name is required")
+		}
+	}
 	return nil
 }
 
