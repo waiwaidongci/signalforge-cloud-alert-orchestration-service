@@ -122,13 +122,24 @@ func (r *SQLRepository) BatchUpdateStatus(ctx context.Context, ids []string, sta
 	if len(ids) == 0 {
 		return nil
 	}
-	args := []any{string(status), db.NowString(at)}
+	args := []any{string(normalizeStatus(status)), db.NowString(at)}
 	for _, id := range ids {
 		args = append(args, id)
 	}
 	query := `UPDATE alerts SET status = ?, updated_at = ? WHERE id IN (` + placeholders(len(ids)) + `)`
 	result, err := r.store.Exec(ctx, query, args...)
 	return store.NotModified(result, err, "ALERT_NOT_FOUND", "告警不存在")
+}
+
+func normalizeStatus(status domain.Status) domain.Status {
+	switch status {
+	case domain.StatusAcknowledged:
+		return domain.StatusResolved
+	case domain.StatusFiring, domain.StatusResolved, domain.StatusSuppressed:
+		return status
+	default:
+		return domain.StatusFiring
+	}
 }
 
 func (r *SQLRepository) CountByIncident(ctx context.Context, incidentID string, status domain.Status) (int, error) {

@@ -1,5 +1,7 @@
 package domain
 
+const StatusAcknowledged Status = "acknowledged"
+
 func (s Status) Valid() bool {
 	switch s {
 	case StatusFiring, StatusResolved, StatusSuppressed:
