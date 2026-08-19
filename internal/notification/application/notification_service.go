@@ -2,9 +2,9 @@ package application
 
 import (
 	"context"
-	"strings"
 
 	"github.com/acme/signalforge/internal/notification/domain"
+	notificationinfra "github.com/acme/signalforge/internal/notification/infrastructure"
 	"github.com/acme/signalforge/internal/shared/clock"
 	"github.com/acme/signalforge/internal/shared/id"
 )
@@ -59,7 +59,7 @@ func (s *Service) Notify(ctx context.Context, notification domain.Notification) 
 }
 
 func shouldReturnUnknownChannel(err error) bool {
-	return strings.Contains(err.Error(), "destination")
+	return notificationinfra.ClassifySendError(err)
 }
 
 func (s *Service) Get(ctx context.Context, id string) (domain.Notification, error) {
