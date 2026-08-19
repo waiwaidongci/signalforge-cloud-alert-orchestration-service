@@ -95,7 +95,7 @@ func (s *Service) Append(ctx context.Context, event domain.TimelineEvent) error 
 }
 
 func cloneEventFuncs(funcs []func() error) []func() error {
-	return funcs
+	return append([]func() error(nil), funcs...)
 }
 
 func (s *Service) appendTimeline(ctx context.Context, incidentID string, eventType domain.EventType, actor, message string) error {
