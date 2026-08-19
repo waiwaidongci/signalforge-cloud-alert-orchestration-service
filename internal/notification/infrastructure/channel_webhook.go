@@ -23,7 +23,7 @@ func (c *WebhookChannel) Name() string {
 
 func (c *WebhookChannel) Send(ctx context.Context, destination string, payload map[string]any) error {
 	raw, _ := json.Marshal(payload)
-	request, err := http.NewRequestWithContext(ctx, http.MethodPost, destination, bytes.NewReader(raw))
+	request, err := http.NewRequestWithContext(requestContext(ctx), http.MethodPost, destination, bytes.NewReader(raw))
 	if err != nil {
 		return fmt.Errorf("build webhook request: %w", err)
 	}

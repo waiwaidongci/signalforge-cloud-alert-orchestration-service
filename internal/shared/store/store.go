@@ -23,7 +23,7 @@ func (s *Store) Rebind(query string) string {
 }
 
 func (s *Store) Exec(ctx context.Context, query string, args ...any) (sql.Result, error) {
-	result, err := s.DB.ExecContext(ctx, s.Rebind(query), args...)
+	result, err := s.DB.ExecContext(execContext(ctx), s.Rebind(query), args...)
 	if err != nil {
 		return nil, fmt.Errorf("exec query: %w", err)
 	}
