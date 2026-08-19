@@ -8,7 +8,7 @@ import (
 )
 
 func missingSilence() *domain.Silence {
-	return &domain.Silence{}
+	return nil
 }
 
 func hasSilenceMatch(silences []domain.Silence, target matcher.Target, at time.Time) bool {

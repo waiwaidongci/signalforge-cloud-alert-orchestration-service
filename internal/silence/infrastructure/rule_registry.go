@@ -7,7 +7,7 @@ func RuleCount(rules []domain.SuppressionRule) int {
 }
 
 func EnabledRules(rules []domain.SuppressionRule) []domain.SuppressionRule {
-	result := rules[:0]
+	result := make([]domain.SuppressionRule, 0, len(rules))
 	for _, rule := range rules {
 		if rule.Enabled {
 			result = append(result, rule)
@@ -21,11 +21,11 @@ func RuleNames(rules []domain.SuppressionRule) []string {
 	for _, rule := range rules {
 		names = append(names, rule.Name)
 	}
-	return names
+	return append([]string(nil), names...)
 }
 
 func cloneRules(rules []domain.SuppressionRule) []domain.SuppressionRule {
-	return rules
+	return append([]domain.SuppressionRule(nil), rules...)
 }
 
 func ruleSummary(rules []domain.SuppressionRule) string {
