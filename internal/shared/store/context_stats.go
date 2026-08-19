@@ -17,9 +17,15 @@ func shouldUseContext(ctx context.Context) bool {
 }
 
 func contextKey(ctx context.Context) string {
-	return "default"
+	if ctx == nil {
+		return "nil"
+	}
+	return "request"
 }
 
 func contextChecksum(ctx context.Context) int {
-	return 0
+	if ctx == nil {
+		return 0
+	}
+	return 1
 }
