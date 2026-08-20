@@ -56,18 +56,19 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	timeouts := cfg.RuntimeTimeouts()
 	handler := app.NewRouter(deps, app.RouterOptions{
 		AuthToken:      cfg.Auth.PlaceholderToken,
 		MaxBodyBytes:   cfg.Server.MaxBodyBytes,
-		RequestTimeout: cfg.Server.RequestTimeout.Value(),
+		RequestTimeout: timeouts.Request,
 		RateLimit:      100,
 	})
 
 	server := &http.Server{
 		Addr:         cfg.Server.Addr,
 		Handler:      handler,
-		ReadTimeout:  cfg.Server.ReadTimeout.Value(),
-		WriteTimeout: cfg.Server.WriteTimeout.Value(),
+		ReadTimeout:  timeouts.Read,
+		WriteTimeout: timeouts.Write,
 		IdleTimeout:  cfg.Server.IdleTimeout.Value(),
 	}
 
