@@ -1,0 +1,12 @@
+{
+  "start": "go run ./cmd/server",
+  "workdir": ".",
+  "env": {
+    "SIGNALFORGE_SERVER_ADDR": ":18080",
+    "SIGNALFORGE_DATABASE_DSN": ":memory:",
+    "SIGNALFORGE_SCHEDULER_ENABLED": "false"
+  },
+  "ready_url": "http://127.0.0.1:18080/healthz",
+  "ready_status": [200],
+  "startup_timeout": 20
+}

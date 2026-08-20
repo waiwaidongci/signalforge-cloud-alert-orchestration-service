@@ -9,15 +9,16 @@ import (
 type Kind string
 
 const (
-	KindBadRequest   Kind = "BAD_REQUEST"
-	KindUnauthorized Kind = "UNAUTHORIZED"
-	KindForbidden    Kind = "FORBIDDEN"
-	KindNotFound     Kind = "NOT_FOUND"
-	KindConflict     Kind = "CONFLICT"
-	KindValidation   Kind = "VALIDATION"
-	KindRateLimited  Kind = "RATE_LIMITED"
-	KindInternal     Kind = "INTERNAL"
-	KindUnavailable  Kind = "UNAVAILABLE"
+	KindBadRequest      Kind = "BAD_REQUEST"
+	KindUnauthorized    Kind = "UNAUTHORIZED"
+	KindForbidden       Kind = "FORBIDDEN"
+	KindNotFound        Kind = "NOT_FOUND"
+	KindConflict        Kind = "CONFLICT"
+	KindValidation      Kind = "VALIDATION"
+	KindRateLimited     Kind = "RATE_LIMITED"
+	KindPayloadTooLarge Kind = "PAYLOAD_TOO_LARGE"
+	KindInternal        Kind = "INTERNAL"
+	KindUnavailable     Kind = "UNAVAILABLE"
 )
 
 type FieldError struct {
@@ -71,6 +72,10 @@ func Conflict(code, message string) *Error {
 
 func Internal(code, message string) *Error {
 	return New(KindInternal, code, message)
+}
+
+func PayloadTooLarge(err error) *Error {
+	return Wrap(err, KindPayloadTooLarge, "REQUEST_BODY_TOO_LARGE", "请求体超过限制")
 }
 
 func IsKind(err error, kind Kind) bool {
