@@ -1,7 +1,17 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"errors"
+)
 
 func ProbeCancelled(ctx context.Context, err error) bool {
-	return err != nil && ctx.Err() != nil
+	if err == nil {
+		return false
+	}
+	ctxErr := ctx.Err()
+	if ctxErr == nil {
+		return false
+	}
+	return errors.Is(err, ctxErr)
 }

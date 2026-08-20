@@ -9,5 +9,5 @@ import (
 type ProbeRunner struct{}
 
 func (ProbeRunner) Run(ctx context.Context) error {
-	return infrastructure.ProbeContext(context.Background())
+	return infrastructure.ProbeContext(ctx)
 }
