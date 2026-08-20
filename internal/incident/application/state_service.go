@@ -2,7 +2,12 @@ package application
 
 import "github.com/acme/signalforge/internal/incident/domain"
 
-func ResolveRetry(state domain.RetryState) domain.RetryState { return domain.AdvanceState(state, true) }
+func ResolveRetry(state domain.RetryState) domain.RetryState {
+	if state != domain.RetryFailed {
+		return state
+	}
+	return domain.AdvanceState(state, true)
+}
 func ActiveIncidents(states []domain.RetryState) int {
 	n := 0
 	for _, state := range states {
