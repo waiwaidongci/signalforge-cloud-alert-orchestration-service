@@ -36,5 +36,9 @@ func (m *InMemoryTimeline) List(_ context.Context, incidentID string, limit, off
 	if end > total {
 		end = total
 	}
-	return result[offset:end], total, nil
+	page := make([]domain.TimelineEvent, end-offset)
+	for i, event := range result[offset:end] {
+		page[i] = event.Clone()
+	}
+	return page, total, nil
 }

@@ -26,3 +26,14 @@ type TimelineEvent struct {
 	OccurredAt time.Time      `json:"occurred_at"`
 	CreatedAt  time.Time      `json:"created_at"`
 }
+
+func (e TimelineEvent) Clone() TimelineEvent {
+	clone := e
+	if e.Metadata != nil {
+		clone.Metadata = make(map[string]any, len(e.Metadata))
+		for key, value := range e.Metadata {
+			clone.Metadata[key] = value
+		}
+	}
+	return clone
+}

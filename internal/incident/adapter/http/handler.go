@@ -73,7 +73,7 @@ func (h *Handler) Timeline(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, requestID, err)
 		return
 	}
-	httpx.WriteMeta(w, http.StatusOK, events, httpx.NewPageMeta(pagination, total), requestID)
+	httpx.WriteMeta(w, http.StatusOK, detachTimeline(events), httpx.NewPageMeta(pagination, total), requestID)
 }
 
 func (h *Handler) batch(w http.ResponseWriter, r *http.Request, action func(ctx context.Context, ids []string, actor string) error) {
