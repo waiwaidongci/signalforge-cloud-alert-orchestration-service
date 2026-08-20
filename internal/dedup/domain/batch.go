@@ -5,6 +5,14 @@ type BatchItem struct {
 	Labels []string
 }
 
-func CloneBatchItem(item BatchItem) BatchItem { return item }
+func CloneBatchItem(item BatchItem) BatchItem {
+	return BatchItem{Key: item.Key, Labels: append([]string(nil), item.Labels...)}
+}
 
-func CloneBatch(items []BatchItem) []BatchItem { return items }
+func CloneBatch(items []BatchItem) []BatchItem {
+	copyItems := make([]BatchItem, len(items))
+	for i, item := range items {
+		copyItems[i] = CloneBatchItem(item)
+	}
+	return copyItems
+}

@@ -1,9 +1,10 @@
 package application
 
 import (
+	"testing"
+
 	"github.com/acme/signalforge/internal/dedup/domain"
 	"github.com/acme/signalforge/internal/dedup/infrastructure"
-	"testing"
 )
 
 func TestBatchPipelineDoesNotMutateCallerSlice(t *testing.T) {
