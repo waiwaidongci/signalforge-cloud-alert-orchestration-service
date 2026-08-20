@@ -42,8 +42,7 @@ func (r *TimelineSQLRepository) List(ctx context.Context, incidentID string, lim
 	if err != nil {
 		return nil, 0, err
 	}
-	defer rows.Close()
-	events, err := loadTimelineRows(rows)
+	events, err := r.collectRows(rows)
 	return events, total, err
 }
 
@@ -73,5 +72,9 @@ func loadTimelineRows(rows timelineRows) ([]domain.TimelineEvent, error) {
 }
 
 func (r *TimelineSQLRepository) collectRows(rows timelineRows) ([]domain.TimelineEvent, error) {
-	return loadTimelineRows(rows)
+	events, err := loadTimelineRows(rows)
+	if err != nil {
+		return events, fmt.Errorf("timeline repository: %w", err)
+	}
+	return events, nil
 }

@@ -1,10 +1,20 @@
 package persistence
 
+import (
+	"errors"
+	"fmt"
+)
+
 func closeTimelineRows(rows timelineRows) error {
-	_ = rows.Close()
-	return nil
+	return rows.Close()
 }
 
 func mergeTimelineCloseError(primary, closeErr error) error {
-	return primary
+	if primary == nil {
+		return closeErr
+	}
+	if closeErr == nil {
+		return primary
+	}
+	return fmt.Errorf("timeline iteration and close failed: %w", errors.Join(primary, closeErr))
 }

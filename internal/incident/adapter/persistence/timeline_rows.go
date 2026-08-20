@@ -11,7 +11,7 @@ type timelineRows interface {
 
 func collectTimelineRows(rows timelineRows) (events []domain.TimelineEvent, err error) {
 	defer func() {
-		_ = closeTimelineRows(rows)
+		err = mergeTimelineCloseError(err, closeTimelineRows(rows))
 	}()
 	for rows.Next() {
 		event, scanErr := scanTimeline(rows)

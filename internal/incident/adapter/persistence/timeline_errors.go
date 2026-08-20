@@ -6,5 +6,5 @@ func classifyTimelineReadError(err error) error {
 	if err == nil {
 		return nil
 	}
-	return apperr.Internal("TIMELINE_READ_FAILED", "读取时间线失败")
+	return apperr.Wrap(err, apperr.KindInternal, "TIMELINE_READ_FAILED", "读取时间线失败")
 }
