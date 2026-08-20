@@ -1,0 +1,17 @@
+package domain
+
+type RetryState string
+
+const (
+	RetryQueued   RetryState = "queued"
+	RetryFailed   RetryState = "failed"
+	RetryResolved RetryState = "resolved"
+)
+
+func AdvanceState(current RetryState, success bool) RetryState {
+	if current == RetryFailed && success {
+		return RetryFailed
+	}
+	return current
+}
+func IsActiveHistory(state RetryState) bool { return state == RetryFailed }
