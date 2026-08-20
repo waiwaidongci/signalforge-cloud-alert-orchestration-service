@@ -1,11 +1,13 @@
 package http
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 
 	escalationapp "github.com/acme/signalforge/internal/escalation/application"
 	escalationdomain "github.com/acme/signalforge/internal/escalation/domain"
+	"github.com/acme/signalforge/internal/shared/apperr"
 	"github.com/acme/signalforge/internal/shared/httpx"
 )
 
@@ -68,7 +70,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 	policy, err := h.service.Get(r.Context(), id)
 	if err != nil {
-		httpx.WriteError(w, requestID, err)
+		httpx.WriteError(w, requestID, policyReadError(err))
 		return
 	}
 	httpx.WriteJSON(w, http.StatusOK, policy, requestID)
@@ -80,10 +82,17 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	enabledOnly := r.URL.Query().Get("enabled") == "true"
 	policies, total, err := h.service.List(r.Context(), enabledOnly, pagination.PerPage, pagination.Offset)
 	if err != nil {
-		httpx.WriteError(w, requestID, err)
+		httpx.WriteError(w, requestID, policyReadError(err))
 		return
 	}
 	httpx.WriteMeta(w, http.StatusOK, policies, httpx.NewPageMeta(pagination, total), requestID)
+}
+
+func policyReadError(err error) error {
+	if errors.Is(err, escalationdomain.ErrInvalidPolicyData) {
+		return apperr.Wrap(err, apperr.KindBadRequest, "MALFORMED_ESCALATION_POLICY", "升级策略数据无效")
+	}
+	return err
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {

@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/acme/signalforge/internal/shared/matcher"
@@ -41,4 +42,13 @@ func (p Policy) NextDelay(repeat int) time.Duration {
 
 func (p Policy) AllowsRepeat(repeat int) bool {
 	return repeat < p.MaxRepeats
+}
+
+func (p Policy) ValidateRoutes() error {
+	for index, route := range p.Routes {
+		if route.Channel == "" || route.Destination == "" {
+			return fmt.Errorf("%w at index %d", ErrInvalidRoute, index)
+		}
+	}
+	return nil
 }

@@ -55,11 +55,18 @@ func EncodeSelector(selector Selector) string {
 
 func DecodeSelector(raw string) (Selector, error) {
 	var selector Selector
-	if strings.TrimSpace(raw) == "" {
+	trimmed := strings.TrimSpace(raw)
+	if trimmed == "" {
 		return Selector{}, nil
 	}
-	if err := json.Unmarshal([]byte(raw), &selector); err != nil {
-		return Selector{}, fmt.Errorf("decode selector: %w", err)
+	if trimmed == "null" {
+		return Selector{}, fmt.Errorf("%w: selector cannot be null", ErrInvalidSelector)
+	}
+	if err := json.Unmarshal([]byte(trimmed), &selector); err != nil {
+		return Selector{}, fmt.Errorf("%w: decode selector: %w", ErrInvalidSelector, err)
+	}
+	if len(selector.Labels) == 0 && len(selector.SourceIDs) == 0 && len(selector.Services) == 0 && len(selector.Envs) == 0 && len(selector.Severities) == 0 {
+		return Selector{}, fmt.Errorf("%w: selector has no constraints", ErrInvalidSelector)
 	}
 	return selector, nil
 }
