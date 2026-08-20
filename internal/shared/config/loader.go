@@ -40,6 +40,16 @@ func applyEnv(cfg *Config) error {
 	applyString("SIGNALFORGE_LOG_FORMAT", &cfg.Log.Format)
 	applyString("SIGNALFORGE_AUTH_PLACEHOLDER_TOKEN", &cfg.Auth.PlaceholderToken)
 
+	if err := envDuration("SIGNALFORGE_READ_TIMEOUT", &cfg.Server.ReadTimeout); err != nil {
+		return err
+	}
+	if err := envDuration("SIGNALFORGE_WRITE_TIMEOUT", &cfg.Server.WriteTimeout); err != nil {
+		return err
+	}
+	if err := envDuration("SIGNALFORGE_REQUEST_TIMEOUT", &cfg.Server.RequestTimeout); err != nil {
+		return err
+	}
+
 	if value := os.Getenv("SIGNALFORGE_DATABASE_MAX_OPEN_CONNS"); value != "" {
 		if err := setInt(value, &cfg.Database.MaxOpenConns); err != nil {
 			return fmt.Errorf("SIGNALFORGE_DATABASE_MAX_OPEN_CONNS: %w", err)

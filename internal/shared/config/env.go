@@ -25,6 +25,9 @@ func envDuration(name string, target *Duration) error {
 	if err != nil {
 		return fmt.Errorf("parse %s: %w", name, err)
 	}
+	if err := Duration(value).ValidatePositive(); err != nil {
+		return fmt.Errorf("%s: %w", name, err)
+	}
 	*target = Duration(value)
 	return nil
 }
