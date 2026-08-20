@@ -116,8 +116,14 @@ func scanPolicy(row scanner) (domain.Policy, error) {
 	if err := row.Scan(&policy.ID, &policy.Name, &policy.Description, &matchJSON, &policy.WaitSeconds, &policy.RepeatSeconds, &policy.MaxRepeats, &routesJSON, &enabled, &createdAt, &updatedAt); err != nil {
 		return domain.Policy{}, normalizeNotFound(err)
 	}
-	policy.Matcher, _ = matcher.DecodeSelector(matchJSON)
-	_ = json.Unmarshal([]byte(routesJSON), &policy.Routes)
+	decodedMatcher, err := matcher.DecodeSelector(matchJSON)
+	if err != nil {
+		return domain.Policy{}, fmt.Errorf("decode escalation matcher: %w", err)
+	}
+	policy.Matcher = decodedMatcher
+	if err := json.Unmarshal([]byte(routesJSON), &policy.Routes); err != nil {
+		return domain.Policy{}, fmt.Errorf("decode escalation routes: %w", err)
+	}
 	policy.Enabled = enabled != 0
 	policy.CreatedAt, _ = db.ParseTime(createdAt)
 	policy.UpdatedAt, _ = db.ParseTime(updatedAt)

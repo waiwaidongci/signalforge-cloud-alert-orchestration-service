@@ -2,11 +2,14 @@ package matcher
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/acme/signalforge/internal/shared/severity"
 )
+
+var ErrInvalidSelector = errors.New("invalid selector")
 
 type Selector struct {
 	SourceIDs  []string          `json:"source_ids,omitempty"`

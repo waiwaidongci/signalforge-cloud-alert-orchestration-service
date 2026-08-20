@@ -1,9 +1,15 @@
 package domain
 
 import (
+	"errors"
 	"time"
 
 	"github.com/acme/signalforge/internal/shared/matcher"
+)
+
+var (
+	ErrInvalidRoute      = errors.New("invalid escalation route")
+	ErrInvalidPolicyData = errors.New("invalid escalation policy data")
 )
 
 type Route struct {
