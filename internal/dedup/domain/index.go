@@ -6,5 +6,13 @@ type IndexEntry struct {
 }
 
 func CloneIndexEntry(entry IndexEntry) IndexEntry {
-	return IndexEntry{Fingerprint: entry.Fingerprint, Labels: entry.Labels}
+	cloned := IndexEntry{Fingerprint: entry.Fingerprint}
+	if entry.Labels != nil {
+		labels := make(map[string]string, len(entry.Labels))
+		for k, v := range entry.Labels {
+			labels[k] = v
+		}
+		cloned.Labels = labels
+	}
+	return cloned
 }
