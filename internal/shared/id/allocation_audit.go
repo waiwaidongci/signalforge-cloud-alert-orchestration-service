@@ -1,3 +1,3 @@
 package id
 
-func AllocationAudited(allocator *Allocator, value string) bool { return false }
+func AllocationAudited(allocator *Allocator, value string) bool { return allocator.Issued(value) }
