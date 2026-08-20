@@ -15,5 +15,8 @@ func usableWorkerContext(ctx context.Context) bool {
 }
 
 func schedulerLogger(r *Runner) *slog.Logger {
+	if r == nil || r.logger == nil {
+		return slog.Default()
+	}
 	return r.logger
 }

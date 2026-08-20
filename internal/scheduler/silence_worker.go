@@ -6,10 +6,14 @@ import (
 )
 
 func (r *Runner) runSilenceExpiry(ctx context.Context) {
+	db := schedulerDB(r)
+	if db == nil || !usableWorkerContext(ctx) {
+		return
+	}
 	var expired int
-	row := r.deps.DB.QueryRowContext(ctx, `SELECT COUNT(*) FROM silences WHERE ends_at <= ?`, time.Now().UTC().Format(time.RFC3339Nano))
+	row := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM silences WHERE ends_at <= ?`, time.Now().UTC().Format(time.RFC3339Nano))
 	if err := row.Scan(&expired); err != nil {
-		r.logger.Warn("count expired silences failed", "error", err)
+		schedulerLogger(r).Warn("count expired silences failed", "error", err)
 		return
 	}
 	if expired > 0 {
