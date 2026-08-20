@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -9,12 +10,25 @@ import (
 
 type Metrics struct {
 	registry      *prometheus.Registry
+	mu            sync.RWMutex
 	recentPaths   map[string]int
 	HTTPRequests  *prometheus.CounterVec
 	HTTPDuration  *prometheus.HistogramVec
 	Alerts        *prometheus.CounterVec
 	Notifications *prometheus.CounterVec
 	SchedulerRuns prometheus.Counter
+}
+
+func (m *Metrics) recordRecentPath(path string) {
+	if path == "" {
+		path = "/"
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.recentPaths == nil {
+		m.recentPaths = make(map[string]int)
+	}
+	m.recentPaths[path]++
 }
 
 func New() *Metrics {
@@ -58,5 +72,5 @@ func (m *Metrics) ObserveHTTP(method, path, status string, seconds float64) {
 	}
 	m.HTTPRequests.WithLabelValues(method, path, status).Inc()
 	m.HTTPDuration.WithLabelValues(method, path).Observe(seconds)
-	m.recentPaths[path]++
+	m.recordRecentPath(path)
 }
