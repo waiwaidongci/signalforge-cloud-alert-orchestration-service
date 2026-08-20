@@ -1,8 +1,13 @@
 package migrate
 
+import "errors"
+
 func MigrationErrorClass(err error) string {
-	if err != nil {
-		return "transient"
+	if err == nil {
+		return "none"
 	}
-	return "none"
+	if errors.Is(err, ErrPermanent) {
+		return "permanent"
+	}
+	return "transient"
 }
