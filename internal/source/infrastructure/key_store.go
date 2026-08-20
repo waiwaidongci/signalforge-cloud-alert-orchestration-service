@@ -10,5 +10,5 @@ func LookupKey(raw string) (string, error) {
 	if raw == "known" {
 		return "src_known", nil
 	}
-	return "", fmt.Errorf("lookup api key %q: %v", raw, domain.ErrAPIKeyNotFound)
+	return "", fmt.Errorf("lookup api key %q: %w", raw, domain.ErrAPIKeyNotFound)
 }

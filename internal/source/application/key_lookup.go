@@ -10,7 +10,7 @@ import (
 func ResolveKey(raw string) (string, error) {
 	id, err := infrastructure.LookupKey(raw)
 	if err != nil {
-		return "", fmt.Errorf("resolve source key: %v", err)
+		return "", fmt.Errorf("resolve source key: %w", err)
 	}
 	return id, nil
 }
