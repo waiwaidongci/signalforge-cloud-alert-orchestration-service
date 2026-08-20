@@ -18,5 +18,5 @@ func NewIndex() *Index {
 func (i *Index) Register(key string, entry domain.IndexEntry) {
 	i.mu.Lock()
 	defer i.mu.Unlock()
-	i.entries[key] = entry
+	i.entries[key] = domain.CloneIndexEntry(entry)
 }
