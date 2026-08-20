@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/acme/signalforge/internal/incident/domain"
@@ -17,11 +18,14 @@ func NewInMemoryTimeline() *InMemoryTimeline {
 
 func (m *InMemoryTimeline) Append(_ context.Context, event domain.TimelineEvent) error {
 	event.CreatedAt = time.Now().UTC()
-	m.events = append(m.events, event)
+	m.events = append(m.events, event.Clone())
 	return nil
 }
 
 func (m *InMemoryTimeline) List(_ context.Context, incidentID string, limit, offset int) ([]domain.TimelineEvent, int, error) {
+	if limit < 0 || offset < 0 {
+		return nil, 0, errors.New("invalid pagination window")
+	}
 	var result []domain.TimelineEvent
 	for _, event := range m.events {
 		if event.IncidentID == incidentID {

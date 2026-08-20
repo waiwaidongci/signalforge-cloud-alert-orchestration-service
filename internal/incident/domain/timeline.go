@@ -30,10 +30,37 @@ type TimelineEvent struct {
 func (e TimelineEvent) Clone() TimelineEvent {
 	clone := e
 	if e.Metadata != nil {
-		clone.Metadata = make(map[string]any, len(e.Metadata))
-		for key, value := range e.Metadata {
-			clone.Metadata[key] = value
-		}
+		clone.Metadata = deepCopyMetadata(e.Metadata)
 	}
 	return clone
+}
+
+func deepCopyMetadata(m map[string]any) map[string]any {
+	if m == nil {
+		return nil
+	}
+	cp := make(map[string]any, len(m))
+	for k, v := range m {
+		cp[k] = deepCopyValue(v)
+	}
+	return cp
+}
+
+func deepCopyValue(v any) any {
+	switch val := v.(type) {
+	case map[string]any:
+		return deepCopyMetadata(val)
+	case []any:
+		cp := make([]any, len(val))
+		for i, item := range val {
+			cp[i] = deepCopyValue(item)
+		}
+		return cp
+	case []string:
+		cp := make([]string, len(val))
+		copy(cp, val)
+		return cp
+	default:
+		return v
+	}
 }
