@@ -8,11 +8,15 @@ import (
 var ErrDispatchFailed = errors.New("dispatch failed")
 
 func DispatchBatch(jobs []DispatchJob) []DispatchResult {
-	results := make(chan DispatchResult)
+	results := make(chan DispatchResult, len(jobs))
 	var wg sync.WaitGroup
 	for _, job := range jobs {
 		job := job
-		go func() { wg.Add(1); defer wg.Done(); results <- executeDispatch(job) }()
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			results <- executeDispatch(job)
+		}()
 	}
 	wg.Wait()
 	close(results)

@@ -10,5 +10,8 @@ type DispatchResult struct {
 }
 
 func executeDispatch(job DispatchJob) DispatchResult {
+	if job.Fail {
+		return DispatchResult{ID: job.ID, Err: ErrDispatchFailed}
+	}
 	return DispatchResult{ID: job.ID}
 }
