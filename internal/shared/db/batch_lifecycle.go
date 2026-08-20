@@ -1,9 +1,10 @@
 package db
 
+func processItem(tx ItemTransaction, work func() error) error { return CommitItem(tx, work) }
+
 func ProcessItems(items []ItemTransaction, work func(int) error) error {
 	for i, tx := range items {
-		defer tx.Rollback()
-		if err := CommitItem(tx, func() error { return work(i) }); err != nil {
+		if err := processItem(tx, func() error { return work(i) }); err != nil {
 			return err
 		}
 	}

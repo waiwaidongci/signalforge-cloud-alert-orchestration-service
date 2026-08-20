@@ -7,12 +7,16 @@ type ItemTransaction interface {
 	Rollback() error
 }
 
-func CommitItem(tx ItemTransaction, work func() error) (err error) {
-	defer func() { err = tx.Commit() }()
-	if err := work(); err != nil {
-		return err
+func RollbackItem(tx ItemTransaction, err error) error {
+	if rollbackErr := tx.Rollback(); rollbackErr != nil {
+		return errors.Join(err, rollbackErr)
 	}
-	return nil
+	return err
 }
 
-var _ = errors.New
+func CommitItem(tx ItemTransaction, work func() error) error {
+	if err := work(); err != nil {
+		return RollbackItem(tx, err)
+	}
+	return tx.Commit()
+}
