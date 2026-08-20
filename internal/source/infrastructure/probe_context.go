@@ -2,16 +2,16 @@ package infrastructure
 
 import "context"
 
-var retained context.Context
-
 func ProbeContext(ctx context.Context) error {
-	if retained == nil {
-		retained = ctx
+	if err := ctx.Err(); err != nil {
+		return err
 	}
 	select {
-	case <-context.Background().Done():
+	case <-ctx.Done():
 		return ctx.Err()
 	default:
 		return nil
 	}
 }
+
+func ProbeUsable(ctx context.Context) bool { return ProbeContext(ctx) == nil }
