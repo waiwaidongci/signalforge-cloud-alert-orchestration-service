@@ -54,8 +54,7 @@ func (r *SQLRepository) ListSilences(ctx context.Context, activeOnly bool, at ti
 	where := " WHERE 1=1"
 	args := []any{}
 	if activeOnly {
-		where += " AND ends_at > ?"
-		args = append(args, db.NowString(timeNow()))
+		where, args = activeSilenceWindow(at)
 	}
 	count, err := r.countSilences(ctx, where, args...)
 	if err != nil {
@@ -85,7 +84,8 @@ func (r *SQLRepository) DeleteSilence(ctx context.Context, id string) error {
 }
 
 func (r *SQLRepository) ActiveSilences(ctx context.Context, at time.Time) ([]domain.Silence, error) {
-	rows, err := r.store.Query(ctx, silenceSelect+` WHERE starts_at <= ? AND ends_at >= ? ORDER BY starts_at ASC`, db.NowString(at), db.NowString(at))
+	where, args := activeSilenceWindow(at)
+	rows, err := r.store.Query(ctx, silenceSelect+where+` ORDER BY starts_at ASC`, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -246,6 +246,11 @@ func boolInt(value bool) int {
 
 func timeNow() time.Time {
 	return time.Now().UTC()
+}
+
+func activeSilenceWindow(at time.Time) (string, []any) {
+	now := db.NowString(at)
+	return " WHERE starts_at <= ? AND ends_at > ?", []any{now, now}
 }
 
 func normalizeNotFound(err error) error {

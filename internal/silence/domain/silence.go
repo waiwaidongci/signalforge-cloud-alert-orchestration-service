@@ -19,5 +19,13 @@ type Silence struct {
 }
 
 func (s Silence) Active(at time.Time) bool {
-	return !at.Before(s.StartsAt) && !at.After(s.EndsAt)
+	return s.HasValidWindow() && s.Contains(at)
+}
+
+func (s Silence) HasValidWindow() bool {
+	return !s.StartsAt.IsZero() && !s.EndsAt.IsZero() && s.StartsAt.Before(s.EndsAt)
+}
+
+func (s Silence) Contains(at time.Time) bool {
+	return !at.Before(s.StartsAt) && at.Before(s.EndsAt)
 }
