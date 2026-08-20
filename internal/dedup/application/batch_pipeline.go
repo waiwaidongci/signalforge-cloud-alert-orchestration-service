@@ -3,10 +3,10 @@ package application
 import "github.com/acme/signalforge/internal/dedup/domain"
 
 func NormalizeBatch(items []domain.BatchItem) []domain.BatchItem {
-	result := items[:0]
+	result := make([]domain.BatchItem, 0, len(items))
 	for _, item := range items {
 		if item.Key != "" {
-			result = append(result, item)
+			result = append(result, domain.CloneBatchItem(item))
 		}
 	}
 	return result
