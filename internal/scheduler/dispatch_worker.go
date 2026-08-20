@@ -9,6 +9,17 @@ type DispatchResult struct {
 	Err error
 }
 
+func dispatchFailure(job DispatchJob) error {
+	if job.Fail {
+		return ErrDispatchFailed
+	}
+	return nil
+}
+
+func dispatchResult(job DispatchJob) DispatchResult {
+	return DispatchResult{ID: job.ID, Err: dispatchFailure(job)}
+}
+
 func executeDispatch(job DispatchJob) DispatchResult {
-	return DispatchResult{ID: job.ID}
+	return dispatchResult(job)
 }
