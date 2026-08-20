@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/acme/signalforge/internal/escalation/domain"
@@ -118,11 +119,16 @@ func scanPolicy(row scanner) (domain.Policy, error) {
 	}
 	decodedMatcher, err := matcher.DecodeSelector(matchJSON)
 	if err != nil {
-		return domain.Policy{}, fmt.Errorf("decode escalation matcher: %w", err)
+		return domain.Policy{}, errors.Join(domain.ErrInvalidPolicyData, fmt.Errorf("decode escalation matcher: %w", err))
 	}
 	policy.Matcher = decodedMatcher
 	if err := json.Unmarshal([]byte(routesJSON), &policy.Routes); err != nil {
-		return domain.Policy{}, fmt.Errorf("decode escalation routes: %w", err)
+		return domain.Policy{}, errors.Join(domain.ErrInvalidPolicyData, fmt.Errorf("decode escalation routes: %w", err))
+	}
+	for _, route := range policy.Routes {
+		if route.Channel == "" || route.Destination == "" {
+			return domain.Policy{}, errors.Join(domain.ErrInvalidPolicyData, fmt.Errorf("escalation route missing channel or destination: %w", domain.ErrInvalidRoute))
+		}
 	}
 	policy.Enabled = enabled != 0
 	policy.CreatedAt, _ = db.ParseTime(createdAt)

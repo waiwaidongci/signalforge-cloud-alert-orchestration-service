@@ -54,12 +54,16 @@ func EncodeSelector(selector Selector) string {
 }
 
 func DecodeSelector(raw string) (Selector, error) {
-	var selector Selector
-	if strings.TrimSpace(raw) == "" {
+	trimmed := strings.TrimSpace(raw)
+	if trimmed == "" {
 		return Selector{}, nil
 	}
+	if trimmed == "null" {
+		return Selector{}, fmt.Errorf("decode selector: %w", ErrInvalidSelector)
+	}
+	var selector Selector
 	if err := json.Unmarshal([]byte(raw), &selector); err != nil {
-		return Selector{}, fmt.Errorf("decode selector: %w", err)
+		return Selector{}, fmt.Errorf("decode selector: %w", errors.Join(ErrInvalidSelector, err))
 	}
 	return selector, nil
 }

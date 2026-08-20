@@ -1,11 +1,13 @@
 package http
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 
 	escalationapp "github.com/acme/signalforge/internal/escalation/application"
 	escalationdomain "github.com/acme/signalforge/internal/escalation/domain"
+	"github.com/acme/signalforge/internal/shared/apperr"
 	"github.com/acme/signalforge/internal/shared/httpx"
 )
 
@@ -68,6 +70,9 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 	policy, err := h.service.Get(r.Context(), id)
 	if err != nil {
+		if errors.Is(err, escalationdomain.ErrInvalidPolicyData) {
+			err = apperr.Wrap(err, apperr.KindBadRequest, "ESCALATION_POLICY_INVALID", "升级策略数据已损坏")
+		}
 		httpx.WriteError(w, requestID, err)
 		return
 	}
