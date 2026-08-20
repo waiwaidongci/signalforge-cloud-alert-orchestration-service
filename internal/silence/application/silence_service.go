@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"time"
 
 	"github.com/acme/signalforge/internal/shared/clock"
 	"github.com/acme/signalforge/internal/shared/id"
@@ -63,7 +64,7 @@ func (s *Service) GetSilence(ctx context.Context, silenceID string) (domain.Sile
 }
 
 func (s *Service) ListSilences(ctx context.Context, activeOnly bool, limit, offset int) ([]domain.Silence, int, error) {
-	return s.repository.ListSilences(ctx, activeOnly, limit, offset)
+	return s.repository.ListSilences(ctx, activeOnly, time.Now().UTC(), limit, offset)
 }
 
 func (s *Service) DeleteSilence(ctx context.Context, silenceID string) error {

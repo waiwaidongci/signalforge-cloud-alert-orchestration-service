@@ -50,11 +50,11 @@ func (r *SQLRepository) FindSilenceByID(ctx context.Context, id string) (domain.
 	return scanSilence(r.store.QueryRow(ctx, silenceSelect+` WHERE id = ?`, id))
 }
 
-func (r *SQLRepository) ListSilences(ctx context.Context, activeOnly bool, limit, offset int) ([]domain.Silence, int, error) {
+func (r *SQLRepository) ListSilences(ctx context.Context, activeOnly bool, at time.Time, limit, offset int) ([]domain.Silence, int, error) {
 	where := " WHERE 1=1"
 	args := []any{}
 	if activeOnly {
-		where += " AND ends_at >= ?"
+		where += " AND ends_at > ?"
 		args = append(args, db.NowString(timeNow()))
 	}
 	count, err := r.countSilences(ctx, where, args...)

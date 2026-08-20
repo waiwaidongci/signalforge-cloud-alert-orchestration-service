@@ -9,7 +9,7 @@ type Repository interface {
 	CreateSilence(ctx context.Context, silence Silence) error
 	UpdateSilence(ctx context.Context, silence Silence) error
 	FindSilenceByID(ctx context.Context, id string) (Silence, error)
-	ListSilences(ctx context.Context, activeOnly bool, limit, offset int) ([]Silence, int, error)
+	ListSilences(ctx context.Context, activeOnly bool, at time.Time, limit, offset int) ([]Silence, int, error)
 	DeleteSilence(ctx context.Context, id string) error
 	ActiveSilences(ctx context.Context, at time.Time) ([]Silence, error)
 

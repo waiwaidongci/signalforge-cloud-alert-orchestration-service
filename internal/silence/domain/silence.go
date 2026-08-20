@@ -19,5 +19,5 @@ type Silence struct {
 }
 
 func (s Silence) Active(at time.Time) bool {
-	return !at.Before(s.StartsAt) && at.Before(s.EndsAt)
+	return !at.Before(s.StartsAt) && !at.After(s.EndsAt)
 }
