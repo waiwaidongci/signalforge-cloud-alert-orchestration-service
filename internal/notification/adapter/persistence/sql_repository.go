@@ -117,8 +117,11 @@ func scanNotification(row scanner) (domain.Notification, error) {
 		return domain.Notification{}, normalizeNotFound(err)
 	}
 	decoded, err := store.DecodePayload(payload)
-	if err != nil {
+	if err != nil && !store.IsEmptyPayload(err) {
 		return domain.Notification{}, fmt.Errorf("decode notification payload: %w", err)
+	}
+	if decoded == nil {
+		decoded = make(map[string]any)
 	}
 	notification.Payload = decoded
 	notification.Status = domain.Status(status)

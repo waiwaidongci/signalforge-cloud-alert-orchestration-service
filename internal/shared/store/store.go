@@ -60,7 +60,7 @@ func DecodeMap(raw string) (map[string]string, error) {
 
 func DecodePayload(raw string) (map[string]any, error) {
 	if raw == "" || raw == "null" {
-		return nil, nil
+		return nil, ErrEmptyPayload
 	}
 	var value map[string]any
 	if err := json.Unmarshal([]byte(raw), &value); err != nil {
