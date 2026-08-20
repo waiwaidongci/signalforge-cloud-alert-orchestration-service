@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -9,6 +10,7 @@ import (
 
 type Metrics struct {
 	registry      *prometheus.Registry
+	mu            sync.RWMutex
 	recentPaths   map[string]int
 	HTTPRequests  *prometheus.CounterVec
 	HTTPDuration  *prometheus.HistogramVec
@@ -58,5 +60,7 @@ func (m *Metrics) ObserveHTTP(method, path, status string, seconds float64) {
 	}
 	m.HTTPRequests.WithLabelValues(method, path, status).Inc()
 	m.HTTPDuration.WithLabelValues(method, path).Observe(seconds)
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.recentPaths[path]++
 }
