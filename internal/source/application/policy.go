@@ -7,8 +7,10 @@ type PolicyProvider interface {
 }
 
 func ResolvePolicy(provider PolicyProvider, source domain.Source) *domain.SourcePolicy {
-	if provider == nil {
-		return nil
+	if provider != nil {
+		if policy := provider.PolicyFor(source); policy != nil {
+			return policy
+		}
 	}
-	return provider.PolicyFor(source)
+	return domain.NewSourcePolicy()
 }

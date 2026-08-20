@@ -7,7 +7,7 @@ type SourcePolicy struct {
 }
 
 func NewSourcePolicy() *SourcePolicy {
-	return &SourcePolicy{}
+	return &SourcePolicy{required: map[string]struct{}{}}
 }
 
 func (p *SourcePolicy) AddRule(label string) error {
@@ -16,6 +16,9 @@ func (p *SourcePolicy) AddRule(label string) error {
 	}
 	if label == "" {
 		return fmt.Errorf("required label is empty")
+	}
+	if p.required == nil {
+		p.required = map[string]struct{}{}
 	}
 	p.required[label] = struct{}{}
 	return nil
