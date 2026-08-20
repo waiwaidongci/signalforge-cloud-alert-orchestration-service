@@ -9,6 +9,7 @@ import (
 
 type Metrics struct {
 	registry      *prometheus.Registry
+	recentPaths   map[string]int
 	HTTPRequests  *prometheus.CounterVec
 	HTTPDuration  *prometheus.HistogramVec
 	Alerts        *prometheus.CounterVec
@@ -19,7 +20,8 @@ type Metrics struct {
 func New() *Metrics {
 	registry := prometheus.NewRegistry()
 	m := &Metrics{
-		registry: registry,
+		registry:    registry,
+		recentPaths: make(map[string]int),
 		HTTPRequests: prometheus.NewCounterVec(prometheus.CounterOpts{
 			Name: "signalforge_http_requests_total",
 			Help: "Total HTTP requests by method, path and status.",
@@ -56,4 +58,5 @@ func (m *Metrics) ObserveHTTP(method, path, status string, seconds float64) {
 	}
 	m.HTTPRequests.WithLabelValues(method, path, status).Inc()
 	m.HTTPDuration.WithLabelValues(method, path).Observe(seconds)
+	m.recentPaths[path]++
 }
