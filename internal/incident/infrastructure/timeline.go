@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/acme/signalforge/internal/incident/domain"
@@ -16,16 +17,23 @@ func NewInMemoryTimeline() *InMemoryTimeline {
 }
 
 func (m *InMemoryTimeline) Append(_ context.Context, event domain.TimelineEvent) error {
+	event = event.Clone()
 	event.CreatedAt = time.Now().UTC()
 	m.events = append(m.events, event)
 	return nil
 }
 
 func (m *InMemoryTimeline) List(_ context.Context, incidentID string, limit, offset int) ([]domain.TimelineEvent, int, error) {
+	if limit <= 0 {
+		return nil, 0, fmt.Errorf("timeline limit must be positive")
+	}
+	if offset < 0 {
+		return nil, 0, fmt.Errorf("timeline offset cannot be negative")
+	}
 	var result []domain.TimelineEvent
 	for _, event := range m.events {
 		if event.IncidentID == incidentID {
-			result = append(result, event)
+			result = append(result, event.Clone())
 		}
 	}
 	total := len(result)
@@ -37,8 +45,6 @@ func (m *InMemoryTimeline) List(_ context.Context, incidentID string, limit, off
 		end = total
 	}
 	page := make([]domain.TimelineEvent, end-offset)
-	for i, event := range result[offset:end] {
-		page[i] = event.Clone()
-	}
+	copy(page, result[offset:end])
 	return page, total, nil
 }

@@ -29,11 +29,28 @@ type TimelineEvent struct {
 
 func (e TimelineEvent) Clone() TimelineEvent {
 	clone := e
-	if e.Metadata != nil {
-		clone.Metadata = make(map[string]any, len(e.Metadata))
-		for key, value := range e.Metadata {
-			clone.Metadata[key] = value
-		}
+	clone.Metadata = cloneTimelineMetadata(e.Metadata)
+	return clone
+}
+
+func cloneTimelineMetadata(metadata map[string]any) map[string]any {
+	if metadata == nil {
+		return nil
+	}
+	clone := make(map[string]any, len(metadata))
+	for key, value := range metadata {
+		clone[key] = cloneTimelineValue(value)
 	}
 	return clone
+}
+
+func cloneTimelineValue(value any) any {
+	switch typed := value.(type) {
+	case map[string]any:
+		return cloneTimelineMetadata(typed)
+	case []string:
+		return append([]string(nil), typed...)
+	default:
+		return value
+	}
 }
