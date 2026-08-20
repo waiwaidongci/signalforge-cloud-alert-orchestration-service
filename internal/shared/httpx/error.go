@@ -9,6 +9,14 @@ import (
 	"github.com/acme/signalforge/internal/shared/apperr"
 )
 
+func NormalizeBodyError(err error) error {
+	var tooLarge *http.MaxBytesError
+	if errors.As(err, &tooLarge) {
+		return apperr.PayloadTooLarge(err)
+	}
+	return apperr.BadRequest("INVALID_JSON", "请求体不是合法 JSON: "+err.Error())
+}
+
 func WriteError(w http.ResponseWriter, requestID string, err error) {
 	var target *apperr.Error
 	if !errors.As(err, &target) {
@@ -17,7 +25,7 @@ func WriteError(w http.ResponseWriter, requestID string, err error) {
 	} else if target.Kind == apperr.KindInternal {
 		slog.Error("http handler returned internal error", "code", target.Code, "message", target.Message, "cause", target.Unwrap())
 	}
-	status := target.HTTPStatus
+	status := apperr.StatusFor(target.Kind)
 	if status == 0 {
 		status = http.StatusInternalServerError
 	}

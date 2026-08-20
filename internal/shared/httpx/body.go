@@ -1,6 +1,9 @@
 package httpx
 
 import (
+	"encoding/json"
+	"errors"
+	"io"
 	"net"
 	"net/http"
 	"strings"
@@ -18,7 +21,15 @@ func MaxBodyBytes(maxBytes int64, next http.Handler) http.Handler {
 }
 
 func DecodeWithLimit(r *http.Request, target any) error {
-	return DecodeJSON(r, target)
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(target); err != nil {
+		return NormalizeBodyError(err)
+	}
+	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
+		return NormalizeBodyError(err)
+	}
+	return nil
 }
 
 func ClientIP(r *http.Request) string {

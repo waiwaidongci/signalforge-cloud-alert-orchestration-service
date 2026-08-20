@@ -99,6 +99,8 @@ func StatusFor(kind Kind) int {
 		return http.StatusUnprocessableEntity
 	case KindRateLimited:
 		return http.StatusTooManyRequests
+	case KindPayloadTooLarge:
+		return http.StatusRequestEntityTooLarge
 	case KindUnavailable:
 		return http.StatusServiceUnavailable
 	default:

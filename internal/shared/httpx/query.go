@@ -1,9 +1,6 @@
 package httpx
 
 import (
-	"encoding/json"
-	"errors"
-	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -44,13 +41,5 @@ func RequirePathValue(r *http.Request, key string) (string, error) {
 }
 
 func DecodeJSON(r *http.Request, target any) error {
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(target); err != nil {
-		return apperr.BadRequest("INVALID_JSON", "请求体不是合法 JSON: "+err.Error())
-	}
-	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
-		return apperr.BadRequest("INVALID_JSON", "请求体只能包含一个 JSON 对象")
-	}
-	return nil
+	return DecodeWithLimit(r, target)
 }
