@@ -56,5 +56,14 @@ func applyEnv(cfg *Config) error {
 	if value := os.Getenv("SIGNALFORGE_METRICS_ENABLED"); value != "" {
 		cfg.Metrics.Enabled = strings.EqualFold(value, "true") || value == "1"
 	}
+	if err := envDuration("SIGNALFORGE_REQUEST_TIMEOUT", &cfg.Server.RequestTimeout); err != nil {
+		return fmt.Errorf("SIGNALFORGE_REQUEST_TIMEOUT: %w", err)
+	}
+	if err := envDuration("SIGNALFORGE_READ_TIMEOUT", &cfg.Server.ReadTimeout); err != nil {
+		return fmt.Errorf("SIGNALFORGE_READ_TIMEOUT: %w", err)
+	}
+	if err := envDuration("SIGNALFORGE_WRITE_TIMEOUT", &cfg.Server.WriteTimeout); err != nil {
+		return fmt.Errorf("SIGNALFORGE_WRITE_TIMEOUT: %w", err)
+	}
 	return nil
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 )
 
 func setInt(raw string, target *int) error {
@@ -21,10 +20,10 @@ func envDuration(name string, target *Duration) error {
 	if !ok {
 		return nil
 	}
-	value, err := time.ParseDuration(raw)
+	value, err := ParsePositive(raw)
 	if err != nil {
 		return fmt.Errorf("parse %s: %w", name, err)
 	}
-	*target = Duration(value)
+	*target = value
 	return nil
 }

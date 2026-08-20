@@ -9,10 +9,9 @@ type RuntimeTimeouts struct {
 }
 
 func (c Config) RuntimeTimeouts() RuntimeTimeouts {
-	defaults := Default().Server
 	return RuntimeTimeouts{
-		Read:    defaults.ReadTimeout.Value(),
-		Write:   defaults.WriteTimeout.Value(),
-		Request: defaults.RequestTimeout.Value(),
+		Read:    c.Server.ReadTimeout.Value(),
+		Write:   c.Server.WriteTimeout.Value(),
+		Request: c.Server.RequestTimeout.Value(),
 	}
 }

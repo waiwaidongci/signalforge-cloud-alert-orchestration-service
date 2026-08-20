@@ -21,17 +21,26 @@ func (d Duration) ValidatePositive() error {
 	return nil
 }
 
+func ParsePositive(raw string) (Duration, error) {
+	parsed, err := time.ParseDuration(raw)
+	if err != nil {
+		return 0, err
+	}
+	duration := Duration(parsed)
+	if err := duration.ValidatePositive(); err != nil {
+		return 0, err
+	}
+	return duration, nil
+}
+
 func (d *Duration) UnmarshalYAML(node *yaml.Node) error {
 	if node.Kind != yaml.ScalarNode {
 		return fmt.Errorf("duration must be a scalar value")
 	}
-	parsed, err := time.ParseDuration(node.Value)
+	parsed, err := ParsePositive(node.Value)
 	if err != nil {
 		return fmt.Errorf("parse duration %q: %w", node.Value, err)
 	}
-	if err := Duration(parsed).ValidatePositive(); err != nil {
-		return err
-	}
-	*d = Duration(parsed)
+	*d = parsed
 	return nil
 }
