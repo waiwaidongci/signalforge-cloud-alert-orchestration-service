@@ -10,7 +10,7 @@ import (
 
 var ErrEmptyPayload = errors.New("empty payload")
 
-func IsEmptyPayload(error) bool { return false }
+func IsEmptyPayload(err error) bool { return errors.Is(err, ErrEmptyPayload) }
 
 func NotModified(result sql.Result, err error, code, message string) error {
 	if err != nil {

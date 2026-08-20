@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/acme/signalforge/internal/shared/db"
 )
@@ -59,12 +60,19 @@ func DecodeMap(raw string) (map[string]string, error) {
 }
 
 func DecodePayload(raw string) (map[string]any, error) {
-	if raw == "" || raw == "null" {
-		return nil, nil
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return nil, ErrEmptyPayload
+	}
+	if raw == "null" {
+		return nil, ErrEmptyPayload
 	}
 	var value map[string]any
 	if err := json.Unmarshal([]byte(raw), &value); err != nil {
 		return nil, fmt.Errorf("decode payload: %w", err)
+	}
+	if value == nil {
+		return nil, ErrEmptyPayload
 	}
 	return value, nil
 }

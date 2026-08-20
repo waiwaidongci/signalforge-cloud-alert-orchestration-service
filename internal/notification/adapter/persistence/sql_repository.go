@@ -117,10 +117,13 @@ func scanNotification(row scanner) (domain.Notification, error) {
 		return domain.Notification{}, normalizeNotFound(err)
 	}
 	decoded, err := store.DecodePayload(payload)
-	if err != nil {
+	if store.IsEmptyPayload(err) {
+		notification.Payload = domain.NewPayload()
+	} else if err != nil {
 		return domain.Notification{}, fmt.Errorf("decode notification payload: %w", err)
+	} else {
+		notification.Payload = decoded
 	}
-	notification.Payload = decoded
 	notification.Status = domain.Status(status)
 	notification.SentAt = parseOptionalTime(sentAt)
 	notification.CreatedAt, _ = db.ParseTime(createdAt)
