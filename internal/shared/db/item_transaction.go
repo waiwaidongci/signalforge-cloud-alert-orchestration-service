@@ -1,18 +1,14 @@
 package db
 
-import "errors"
-
 type ItemTransaction interface {
 	Commit() error
 	Rollback() error
 }
 
 func CommitItem(tx ItemTransaction, work func() error) (err error) {
-	defer func() { err = tx.Commit() }()
-	if err := work(); err != nil {
+	if err = work(); err != nil {
+		_ = tx.Rollback()
 		return err
 	}
-	return nil
+	return tx.Commit()
 }
-
-var _ = errors.New
