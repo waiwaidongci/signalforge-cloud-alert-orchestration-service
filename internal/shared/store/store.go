@@ -58,6 +58,17 @@ func DecodeMap(raw string) (map[string]string, error) {
 	return value, nil
 }
 
+func DecodePayload(raw string) (map[string]any, error) {
+	if raw == "" || raw == "null" {
+		return nil, nil
+	}
+	var value map[string]any
+	if err := json.Unmarshal([]byte(raw), &value); err != nil {
+		return nil, fmt.Errorf("decode payload: %w", err)
+	}
+	return value, nil
+}
+
 func EncodeAny(value any) string {
 	raw, _ := json.Marshal(value)
 	return string(raw)

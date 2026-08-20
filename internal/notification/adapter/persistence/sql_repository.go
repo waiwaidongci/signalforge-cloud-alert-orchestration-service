@@ -116,7 +116,11 @@ func scanNotification(row scanner) (domain.Notification, error) {
 	if err := row.Scan(&notification.ID, &notification.IncidentID, &notification.AlertID, &notification.Channel, &notification.Destination, &status, &payload, &notification.ErrorMessage, &sentAt, &createdAt, &updatedAt); err != nil {
 		return domain.Notification{}, normalizeNotFound(err)
 	}
-	_ = json.Unmarshal([]byte(payload), &notification.Payload)
+	decoded, err := store.DecodePayload(payload)
+	if err != nil {
+		return domain.Notification{}, fmt.Errorf("decode notification payload: %w", err)
+	}
+	notification.Payload = decoded
 	notification.Status = domain.Status(status)
 	notification.SentAt = parseOptionalTime(sentAt)
 	notification.CreatedAt, _ = db.ParseTime(createdAt)
