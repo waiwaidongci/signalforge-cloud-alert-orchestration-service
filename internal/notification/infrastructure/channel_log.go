@@ -17,7 +17,18 @@ func (c *LogChannel) Name() string {
 	return "log"
 }
 
-func (c *LogChannel) Send(_ context.Context, destination string, payload map[string]any) error {
+func (c *LogChannel) Send(ctx context.Context, destination string, payload map[string]any) error {
+	if err := channelContextError(ctx); err != nil {
+		return err
+	}
+	if destination == "" {
+		return context.Canceled
+	}
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+	}
 	c.logger.Info("notification log channel", "destination", destination, "payload", payload)
 	return nil
 }

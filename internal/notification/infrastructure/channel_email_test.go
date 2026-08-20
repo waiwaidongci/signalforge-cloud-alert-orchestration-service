@@ -6,6 +6,8 @@ import (
 	"io"
 	"log/slog"
 	"testing"
+
+	"github.com/acme/signalforge/internal/notification/domain"
 )
 
 func TestChannelsHonorCanceledContext(t *testing.T) {
@@ -22,5 +24,16 @@ func TestChannelsHonorCanceledContext(t *testing.T) {
 	}
 	if len(failures) != 0 {
 		t.Fatalf("canceled channel errors = %v", failures)
+	}
+}
+
+func TestDispatcherHonorsCanceledContext(t *testing.T) {
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	dispatcher := NewDispatcher(NewEmailChannel(logger), NewLogChannel(logger), NewWebhookChannel())
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	err := dispatcher.Send(ctx, domain.Notification{Channel: "email", Destination: "ops"})
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("dispatcher err=%v", err)
 	}
 }

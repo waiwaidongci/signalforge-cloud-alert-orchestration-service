@@ -22,6 +22,9 @@ func (c *WebhookChannel) Name() string {
 }
 
 func (c *WebhookChannel) Send(ctx context.Context, destination string, payload map[string]any) error {
+	if err := channelContextError(ctx); err != nil {
+		return err
+	}
 	raw, _ := json.Marshal(payload)
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, destination, bytes.NewReader(raw))
 	if err != nil {
