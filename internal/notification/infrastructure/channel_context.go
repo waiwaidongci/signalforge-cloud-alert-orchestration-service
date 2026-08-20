@@ -2,4 +2,4 @@ package infrastructure
 
 import "context"
 
-func channelContextError(context.Context) error { return nil }
+func channelContextError(ctx context.Context) error { return ctx.Err() }
