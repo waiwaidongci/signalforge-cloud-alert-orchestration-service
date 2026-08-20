@@ -43,15 +43,8 @@ func (r *TimelineSQLRepository) List(ctx context.Context, incidentID string, lim
 		return nil, 0, err
 	}
 	defer rows.Close()
-	var events []domain.TimelineEvent
-	for rows.Next() {
-		event, err := scanTimeline(rows)
-		if err != nil {
-			return nil, 0, err
-		}
-		events = append(events, event)
-	}
-	return events, total, rows.Err()
+	events, err := loadTimelineRows(rows)
+	return events, total, err
 }
 
 const timelineSelect = `
@@ -72,4 +65,13 @@ func scanTimeline(row scanner) (domain.TimelineEvent, error) {
 	event.OccurredAt, _ = db.ParseTime(occurredAt)
 	event.CreatedAt, _ = db.ParseTime(createdAt)
 	return event, nil
+}
+
+func loadTimelineRows(rows timelineRows) ([]domain.TimelineEvent, error) {
+	events, err := collectTimelineRows(rows)
+	return events, classifyTimelineReadError(err)
+}
+
+func (r *TimelineSQLRepository) collectRows(rows timelineRows) ([]domain.TimelineEvent, error) {
+	return loadTimelineRows(rows)
 }
